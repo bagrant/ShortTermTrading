@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: short-term-trading-system
+    env: docker
+    dockerfilePath: Dockerfile
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000

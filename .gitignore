@@ -1,0 +1,23 @@
+# Dependency & Build output
+node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+.venv/
+env/
+
+# Data & Logs
+*.log
+backend.log
+frontend.log
+*.db
+backend/trading_system.db
+
+# Environment variables & Keys
+.env
+config_toss.properties
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
