@@ -33,6 +33,14 @@ const CustomizedDot = (props) => {
   return null;
 };
 
+const getBackendUrl = (path = '') => {
+  const { protocol, hostname, port } = window.location;
+  if (port === '5173') {
+    return `${protocol}//${hostname}:8001${path}`;
+  }
+  return `${protocol}//${hostname}${port ? `:${port}` : ''}${path}`;
+};
+
 export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settings, onUpdateSettings }) {
   const [selectedCode, setSelectedCode] = useState('005930');
   const [chartHistory, setChartHistory] = useState([]);
@@ -81,7 +89,7 @@ export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settin
     }
     setIsFetchingToss(true);
     try {
-      const res = await fetch('http://localhost:8001/api/toss/fetch-accounts', {
+      const res = await fetch(getBackendUrl('/api/toss/fetch-accounts'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: tossClientId, client_secret: tossClientSecret })
@@ -467,13 +475,17 @@ export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settin
           <h3 className="text-slate-200 font-bold text-sm mb-4">실시간 체결 및 신호 로그</h3>
           <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
             {orderLogs && orderLogs.map((log, idx) => (
-              <div key={idx} className="flex justify-between items-center bg-slate-950 p-2.5 rounded border border-slate-800 text-xs animate-fadeIn">
-                <span className="text-slate-500">{log.time}</span>
-                <span className={`font-semibold inline-flex items-center gap-1 w-32 flex-shrink-0 ${log.order_type === '매수' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                  <span className="w-10 text-left">[{log.order_type}]</span>
-                  <span className="w-20 text-right font-mono">{log.price}</span>
+              <div key={idx} className="flex items-center gap-3 bg-slate-950 p-2.5 rounded border border-slate-800 text-xs animate-fadeIn">
+                <span className="text-slate-500 w-14 flex-shrink-0">{log.time}</span>
+                <span className={`font-semibold w-12 flex-shrink-0 ${log.order_type === '매수' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                  [{log.order_type}]
                 </span>
-                <span className="text-slate-300">{log.status}</span>
+                <span className="w-20 text-right font-mono flex-shrink-0 text-slate-300">
+                  {log.price}
+                </span>
+                <span className="text-slate-300 flex-1 text-right truncate">
+                  {log.status}
+                </span>
               </div>
             ))}
           </div>
@@ -482,42 +494,40 @@ export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settin
       </div>
 
       {/* Control Action Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 border border-slate-800 p-4 rounded-xl text-xs">
-        <div className="flex gap-2">
-          {currentSettings.is_auto_trading ? (
-            <button 
-              onClick={() => onUpdateSettings({ is_auto_trading: false })}
-              className="bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2 px-4 rounded-lg flex items-center gap-1.5 transition"
-            >
-              <Square size={14} /> 자동매매 일시정지
-            </button>
-          ) : (
-            <button 
-              onClick={() => onUpdateSettings({ is_auto_trading: true })}
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-100 font-bold py-2 px-4 rounded-lg flex items-center gap-1.5 transition shadow-md shadow-blue-500/10"
-            >
-              <Play size={14} /> 자동매매 시작
-            </button>
-          )}
-          
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-between gap-3 bg-slate-900 border border-slate-800 p-4 rounded-xl text-xs w-full">
+        {currentSettings.is_auto_trading ? (
           <button 
             onClick={() => onUpdateSettings({ is_auto_trading: false })}
-            className="bg-red-950 text-red-400 hover:bg-red-900 font-bold py-2 px-4 rounded-lg flex items-center gap-1.5 transition"
+            className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-amber-400 font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition"
           >
-            <Square size={14} /> 매매 긴급 정지
+            <Square size={14} /> 자동매매 일시정지
           </button>
-        </div>
-        <div className="flex gap-2">
+        ) : (
           <button 
-            onClick={() => setIsModalOpen(true)}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 px-4 rounded-lg flex items-center gap-1.5 transition"
+            onClick={() => onUpdateSettings({ is_auto_trading: true })}
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-100 font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition shadow-md shadow-blue-500/10"
           >
-            <Settings size={14} /> 매매 설정
+            <Play size={14} /> 자동매매 시작
           </button>
-          <span className="bg-slate-950 border border-slate-800 py-2 px-4 rounded-lg text-slate-400 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> 텔레그램 연동 ON
-          </span>
-        </div>
+        )}
+        
+        <button 
+          onClick={() => onUpdateSettings({ is_auto_trading: false })}
+          className="w-full sm:w-auto bg-red-950 text-red-400 hover:bg-red-900 font-bold py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition"
+        >
+          <Square size={14} /> 매매 긴급 정지
+        </button>
+
+        <button 
+          onClick={() => setIsModalOpen(true)}
+          className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-slate-300 py-2.5 px-4 rounded-lg flex items-center justify-center gap-1.5 transition"
+        >
+          <Settings size={14} /> 매매 설정
+        </button>
+
+        <span className="w-full sm:w-auto bg-slate-950 border border-slate-800 py-2.5 px-4 rounded-lg text-slate-400 flex items-center justify-center gap-1.5">
+          <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> 텔레그램 연동 ON
+        </span>
       </div>
 
       {/* 매매 설정 모달 */}

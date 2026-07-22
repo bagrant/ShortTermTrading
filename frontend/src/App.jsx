@@ -5,6 +5,24 @@ import LiquidityTab from './components/LiquidityTab';
 import ReportTab from './components/ReportTab';
 import { Briefcase, Activity, Flame, ShieldAlert, Wifi, TrendingUp } from 'lucide-react';
 
+// 백엔드 API 및 WebSocket URL 동적 결정
+const getBackendUrl = (path = '') => {
+  const { protocol, hostname, port } = window.location;
+  if (port === '5173') {
+    return `${protocol}//${hostname}:8001${path}`;
+  }
+  return `${protocol}//${hostname}${port ? `:${port}` : ''}${path}`;
+};
+
+const getWsUrl = (path = '') => {
+  const { protocol, hostname, port } = window.location;
+  const wsProtocol = protocol === 'https:' ? 'wss:' : 'ws:';
+  if (port === '5173') {
+    return `${wsProtocol}//${hostname}:8001${path}`;
+  }
+  return `${wsProtocol}//${hostname}${port ? `:${port}` : ''}${path}`;
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState('portfolio');
   const [balance, setBalance] = useState(null);
@@ -29,7 +47,7 @@ export default function App() {
   // 1. API 데이터 폴링 함수
   const fetchSettings = async () => {
     try {
-      const res = await fetch('http://localhost:8001/api/settings');
+      const res = await fetch(getBackendUrl('/api/settings'));
       const data = await res.json();
       setSettings(data);
     } catch (err) {
@@ -39,7 +57,7 @@ export default function App() {
 
   const handleUpdateSettings = async (newSettings) => {
     try {
-      const res = await fetch('http://localhost:8001/api/settings', {
+      const res = await fetch(getBackendUrl('/api/settings'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...settings, ...newSettings })
@@ -57,7 +75,7 @@ export default function App() {
   // 1. API 데이터 폴링 함수
   const fetchBalance = async () => {
     try {
-      const res = await fetch('http://localhost:8001/api/balance');
+      const res = await fetch(getBackendUrl('/api/balance'));
       const data = await res.json();
       setBalance(data);
     } catch (err) {
@@ -67,7 +85,7 @@ export default function App() {
 
   const fetchLiquidity = async () => {
     try {
-      const res = await fetch('http://localhost:8001/api/liquidity');
+      const res = await fetch(getBackendUrl('/api/liquidity'));
       const data = await res.json();
       setLiquidity(data);
     } catch (err) {
@@ -77,7 +95,7 @@ export default function App() {
 
   const fetchReporting = async () => {
     try {
-      const res = await fetch('http://localhost:8001/api/reporting');
+      const res = await fetch(getBackendUrl('/api/reporting'));
       const data = await res.json();
       setReportData(data);
     } catch (err) {
@@ -88,7 +106,7 @@ export default function App() {
   // 주문 전송 핸들러
   const handlePlaceOrder = async (code, orderType, qty, price = 0) => {
     try {
-      const res = await fetch('http://localhost:8001/api/order', {
+      const res = await fetch(getBackendUrl('/api/order'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code, order_type: orderType, qty, price })
@@ -122,7 +140,7 @@ export default function App() {
   useEffect(() => {
     let ws;
     const connectWs = () => {
-      ws = new WebSocket('ws://localhost:8001/ws');
+      ws = new WebSocket(getWsUrl('/ws'));
 
       ws.onopen = () => {
         setWsConnected(true);
