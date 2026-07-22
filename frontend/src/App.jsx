@@ -229,47 +229,47 @@ export default function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
-        {/* Navigation Tabs */}
-        <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl">
+        {/* Navigation Tabs (모바일 터치 가로 스크롤 및 반응형 최적화) */}
+        <div className="flex bg-slate-900 border border-slate-800 p-1 rounded-xl overflow-x-auto scrollbar-none gap-1">
           <button
             onClick={() => setActiveTab('portfolio')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-bold rounded-lg transition-all ${
+            className={`flex-1 min-w-[110px] sm:min-w-0 flex items-center justify-center gap-1.5 py-3 px-2 text-[11px] sm:text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
               activeTab === 'portfolio'
                 ? 'bg-slate-800 text-slate-100 shadow-sm border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Briefcase size={16} /> 종합 자산 현황
+            <Briefcase size={15} /> 종합 자산 현황
           </button>
           <button
             onClick={() => setActiveTab('trading')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-bold rounded-lg transition-all ${
+            className={`flex-1 min-w-[110px] sm:min-w-0 flex items-center justify-center gap-1.5 py-3 px-2 text-[11px] sm:text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
               activeTab === 'trading'
                 ? 'bg-slate-800 text-slate-100 shadow-sm border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Activity size={16} /> 실시간 트레이딩 뷰
+            <Activity size={15} /> 실시간 트레이딩 뷰
           </button>
           <button
             onClick={() => setActiveTab('liquidity')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-bold rounded-lg transition-all ${
+            className={`flex-1 min-w-[110px] sm:min-w-0 flex items-center justify-center gap-1.5 py-3 px-2 text-[11px] sm:text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
               activeTab === 'liquidity'
                 ? 'bg-slate-800 text-slate-100 shadow-sm border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <Flame size={16} /> 당일 유동성/추천주
+            <Flame size={15} /> 당일 유동성/추천주
           </button>
           <button
             onClick={() => setActiveTab('report')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 text-xs font-bold rounded-lg transition-all ${
+            className={`flex-1 min-w-[110px] sm:min-w-0 flex items-center justify-center gap-1.5 py-3 px-2 text-[11px] sm:text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
               activeTab === 'report'
                 ? 'bg-slate-800 text-slate-100 shadow-sm border border-slate-700'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
-            <TrendingUp size={16} /> 알고리즘 리포트
+            <TrendingUp size={15} /> 알고리즘 리포트
           </button>
         </div>
 
