@@ -534,8 +534,8 @@ export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settin
       {isModalOpen && (
         <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center z-50 animate-fadeIn overflow-y-auto p-4">
           <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl w-full max-w-xl shadow-2xl space-y-6 my-8">
-            <div className="flex justify-between items-start">
-              <div>
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1 min-w-0">
                 <h3 className="text-slate-100 font-bold text-lg flex items-center gap-2">
                   <Settings size={20} className="text-blue-400" /> 실시간 매매 및 시스템 설정
                 </h3>
@@ -545,7 +545,7 @@ export default function TradingTab({ tickerData, orderLogs, onPlaceOrder, settin
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-slate-200 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded"
+                className="text-slate-400 hover:text-slate-200 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded whitespace-nowrap flex-shrink-0"
               >
                 닫기
               </button>

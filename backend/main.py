@@ -348,8 +348,11 @@ def get_balance():
                 buy_price = int(h_copy.get("buy_price", 0))
                 curr_price = int(h_copy.get("curr_price", 0))
                 
-                # 수량을 자본금 비율에 맞춰 현실적으로 조율 (원래 0이었으면 0, 아니면 최소 1주)
-                new_qty = max(1, int(round(orig_qty * ratio))) if orig_qty > 0 else 0
+                # 수량을 자본금 비율에 맞춰 현실적으로 조율 (작은 자본금인 경우 0주가 될 수 있음)
+                new_qty = int(round(orig_qty * ratio))
+                if new_qty <= 0:
+                    continue
+                    
                 h_copy["qty"] = new_qty
                 h_copy["buy_price"] = buy_price
                 h_copy["curr_price"] = curr_price
@@ -368,18 +371,14 @@ def get_balance():
                 
                 holdings.append(h_copy)
                 
-            scaled_data["holdings"] = holdings
+            # 남은 가상 현금(예수금) 계산
+            cash = max(0.0, target_cap - total_scaled_buy)
             
-            if holdings:
-                scaled_data["buy_amount"] = total_scaled_buy
-                scaled_data["eval_amount"] = total_scaled_eval
-                scaled_data["evaluation_profit"] = total_scaled_profit
-                scaled_data["total_profit_rate"] = round(((total_scaled_profit / total_scaled_buy) * 100), 2) if total_scaled_buy > 0 else 0.0
-            else:
-                scaled_data["eval_amount"] = int(target_cap)
-                scaled_data["buy_amount"] = int(scaled_data.get("buy_amount", 0) * ratio)
-                scaled_data["evaluation_profit"] = int(scaled_data.get("evaluation_profit", 0) * ratio)
-                
+            scaled_data["holdings"] = holdings
+            scaled_data["buy_amount"] = int(total_scaled_buy + cash)
+            scaled_data["eval_amount"] = int(total_scaled_eval + cash)
+            scaled_data["evaluation_profit"] = int(total_scaled_profit)
+            scaled_data["total_profit_rate"] = round((total_scaled_profit / (total_scaled_buy + cash)) * 100, 2) if (total_scaled_buy + cash) > 0 else 0.0
             scaled_data["realized_profit"] = int(scaled_data.get("realized_profit", 0) * ratio)
             return scaled_data
             
